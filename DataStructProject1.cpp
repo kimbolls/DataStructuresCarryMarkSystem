@@ -191,7 +191,7 @@ void UpdateAssessment(vector<Student> *V1)
 	{
 		if (itr->idNo == tempID)
 		{
-			
+			break;
 		}
 	}
 
