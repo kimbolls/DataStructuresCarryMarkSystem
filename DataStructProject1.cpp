@@ -3,6 +3,8 @@
 #include <string>
 #include <typeinfo>
 #include <cstdbool>
+#include <fstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -168,6 +170,8 @@ void AddStudent(Student *MyStudent)
 				cout << "Choose UPDATE option in MAIN MENU to update." << endl;
 			}
 			break;
+		default:
+			cout << "\nEnter value [1-4] only" << endl;
 		}
 		cout << "Add another assessment [Y/N] : ";
 		cin >> repeat;
@@ -276,6 +280,8 @@ void UpdateAssessment(vector<Student> *V1)
 				cout << "\nNew Lab Test mark (10): " << itr->labTest << endl;
 				cout << "New Percentage of Lab Test is " << percentCalcu(itr->labTest, 3) << "%" << endl;
 				break;
+			default:
+				cout << "\nEnter value [1-4] only" << endl;
 			}
 
 
@@ -289,10 +295,126 @@ void UpdateAssessment(vector<Student> *V1)
 	}
 }
 
+void Summary(vector<Student>* V1)
+{
+	int option, tempOption, total = 0;
+	bool flag = false;
+	float limit, tempInput;
+	char repeat = 'Y';
+	string  tempID;
+	cout << "\nDisplay Menu :" << endl;
+	cout << "[1] Individual " << endl;
+	cout << "[2] All " << endl;
+	cout << "[3] Highest carry mark " << endl;
+	cout << "Select option :";
+	cin >> option;
+	vector<Student>::iterator itr;
+
+	switch (option)
+	{
+	case 1:
+		cout << "\nEnter student ID : ";
+		cin >> ws;
+		getline(cin, tempID);
+		for (itr = V1->begin(); itr != V1->end(); itr++)
+		{
+			if (itr->idNo == tempID)
+			{
+				flag = true;
+				break;
+			}
+		}
+		if (flag == true)
+		{
+			itr->totalCarryMark = percentCalcu(itr->totalQuizMark, 1) + percentCalcu(itr->test, 2) + percentCalcu(itr->assignment, 3) + percentCalcu(itr->labTest, 3);
+			cout << "\n::Carry Mark Details::" << endl;
+			cout << "Student ID                 : " << itr->idNo << endl;
+			cout << "Quiz                       : " << percentCalcu(itr->totalQuizMark, 1) << "%" << endl;
+			cout << "Test                       : " << percentCalcu(itr->test, 2) << "%" << endl;
+			cout << "Assignment                 : " << percentCalcu(itr->assignment, 3) << "%" << endl;
+			cout << "Lab Test                   : " << percentCalcu(itr->labTest, 3) << "%" << endl;
+			cout << "Total Carry Mark           : " << itr->totalCarryMark << "%" << endl;
+			cout << "\nEnd of Summary" << endl;
+			break;
+		}
+		else
+		{
+			cout << "Student ID do not exist" << endl;
+		}
+
+	case 2:
+		cout << "\n::Carry Mark Details::" << endl;
+		for (itr = V1->begin(); itr != V1->end(); itr++)
+		{
+			itr->totalCarryMark = percentCalcu(itr->totalQuizMark, 1) + percentCalcu(itr->test, 2) + percentCalcu(itr->assignment, 3) + percentCalcu(itr->labTest, 3);
+			cout << "Student ID                 : " << itr->idNo << endl;
+			cout << "Quiz                       : " << percentCalcu(itr->totalQuizMark, 1) << "%" << endl;
+			cout << "Test                       : " << percentCalcu(itr->test, 2) << "%" << endl;
+			cout << "Assignment                 : " << percentCalcu(itr->assignment, 3) << "%" << endl;
+			cout << "Lab Test                   : " << percentCalcu(itr->labTest, 3) << "%" << endl;
+			cout << "Total Carry Mark           : " << itr->totalCarryMark << "%\n" << endl;
+		}
+		cout << "\nEnd of Summary" << endl;
+		break;
+
+	case 3:
+
+		cout << "\n::Carry Mark Details::" << endl;
+		float tempCarry = 0;
+		for (itr = V1->begin(); itr != V1->end(); itr++)
+		{
+			itr->totalCarryMark = percentCalcu(itr->totalQuizMark, 1) + percentCalcu(itr->test, 2) + percentCalcu(itr->assignment, 3) + percentCalcu(itr->labTest, 3);
+			if (itr->totalCarryMark > tempCarry)
+			{
+				tempCarry = itr->totalCarryMark;
+			}
+		}
+		for (itr = V1->begin(); itr != V1->end(); itr++)
+		{
+			if (itr->totalCarryMark == tempCarry)
+			{
+				cout << "Student ID                 : " << itr->idNo << endl;
+				cout << "Quiz                       : " << percentCalcu(itr->totalQuizMark, 1) << "%" << endl;
+				cout << "Test                       : " << percentCalcu(itr->test, 2) << "%" << endl;
+				cout << "Assignment                 : " << percentCalcu(itr->assignment, 3) << "%" << endl;
+				cout << "Lab Test                   : " << percentCalcu(itr->labTest, 3) << "%" << endl;
+				cout << "Total Carry Mark           : " << itr->totalCarryMark << "%\n" << endl;
+			}
+		}
+		cout << "\nEnd of Summary" << endl;
+		break;
+	default:
+		cout << "";
+	}
+}
+
+void OutputToFile(vector<Student> *V1)
+{
+	string fileName;
+	ofstream fileOutput;
+	cout << "\nEnter file name: ";
+	cin >> ws;
+	getline(cin, fileName);
+	fileOutput.open(fileName + ".txt");
+	
+	vector<Student>::iterator itr;
+	fileOutput << left << setprecision(2) << fixed;
+	fileOutput << setw(15) << "StudentID" << setw(15) << "Quiz" << setw(15) << "Test" << setw(15) << "Assignment" << setw(15) << "LabTest" << setw(15) << "Total" << setw(15) << endl;
+	
+	for (itr = V1->begin(); itr != V1->end(); itr++)
+	{
+		itr->totalCarryMark = percentCalcu(itr->totalQuizMark, 1) + percentCalcu(itr->test, 2) + percentCalcu(itr->assignment, 3) + percentCalcu(itr->labTest, 4);
+		fileOutput << left;
+		fileOutput << setw(15) << itr->idNo << setw(15) << percentCalcu(itr->totalQuizMark, 1) << setw(15) << percentCalcu(itr->test, 2) << setw(15) << percentCalcu(itr->assignment, 3) << setw(15) << percentCalcu(itr->labTest, 4) << setw(15) << itr->totalCarryMark << setw(15) << endl;
+	}
+	fileOutput.close();
+	cout << "File " << fileName << ".txt is saved" << endl;
+}
+
 int main()
 {
 	vector<Student>V1;
-	Student MyStudent;
+	Student MyStudent, reset;
 	int option;
 
 	do {
@@ -304,13 +426,16 @@ int main()
 		case 1:
 			AddStudent(&MyStudent);
 			V1.push_back(MyStudent);
+			MyStudent = reset;
 			break;
 		case 2:
-			UpdateAssessment(&V1);
+			UpdateAssessment(&V1);			//todo: check if already is true
 			break;
 		case 3:
+			Summary(&V1);
 			break;
 		case 4:
+			OutputToFile(&V1);			//todo: maybe check for data existance before output
 			break;
 		case 5:
 			break;
