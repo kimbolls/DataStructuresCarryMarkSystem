@@ -11,6 +11,7 @@ struct Student {
 	float carryMark;
 	float quiz[3] = { 0,0,0 };
 	float test, assignment, labTest, totalCarryMark, totalQuizMark = 0;
+	bool already[4] = { false };
 };
 
 void ShowMenu()
@@ -44,13 +45,13 @@ float percentCalcu(float totalMark, int option)
 {
 	switch (option)
 	{
-	case 1: totalMark / 45 * 15;
+	case 1: return totalMark / 45 * 15;
 		break;
-	case 2: totalMark / 50 * 25;
+	case 2: return totalMark / 50 * 25;
 		break;
-	case 3: totalMark / 20 * 20;
+	case 3: return totalMark / 20 * 20;
 		break;
-	case 4: totalMark / 10 * 10;
+	case 4: return totalMark / 10 * 10;
 		break;
 	}
 }
@@ -58,7 +59,6 @@ float percentCalcu(float totalMark, int option)
 void AddStudent(Student *MyStudent)
 {
 	int option;
-	bool already[4] = { false };
 	float limit,temp;
 	char repeat = 'Y';
 	cout << "\nEnter student ID : ";
@@ -78,7 +78,7 @@ void AddStudent(Student *MyStudent)
 		{
 		case 1:
 
-			if (already[0] == false)
+			if (MyStudent->already[0] == false)
 			{
 				limit = 15;
 				for (int i = 0; i < sizeof(MyStudent->quiz) / sizeof(MyStudent->quiz[0]); i++)
@@ -96,7 +96,7 @@ void AddStudent(Student *MyStudent)
 			
 				cout << "Total Quiz mark (45m) : " << MyStudent->totalQuizMark << endl;
 				cout << "Percentage of Quiz is " << percentCalcu(MyStudent->totalQuizMark, 1) << "%" << endl;
-				already[0] = true;
+				MyStudent->already[0] = true;
 			}
 			else
 			{
@@ -106,7 +106,7 @@ void AddStudent(Student *MyStudent)
 			break;
 		
 		case 2:
-			if (already[1] == false)
+			if (MyStudent->already[1] == false)
 			{
 				limit = 50;
 				do {
@@ -118,7 +118,7 @@ void AddStudent(Student *MyStudent)
 				
 				cout << "Percentage of Test is " << percentCalcu(temp, 2) << "%" << endl;
 				MyStudent->test = temp;
-				already[1] = true;
+				MyStudent->already[1] = true;
 			}
 			else
 			{
@@ -127,7 +127,7 @@ void AddStudent(Student *MyStudent)
 			}
 			break;
 		case 3:
-			if (already[2] == false)
+			if (MyStudent->already[2] == false)
 			{
 				limit = 20;
 				do {
@@ -139,7 +139,7 @@ void AddStudent(Student *MyStudent)
 
 				cout << "Percentage of Assignment is " << percentCalcu(temp, 3) << "%" << endl;
 				MyStudent->assignment= temp;
-				already[2] = true;
+				MyStudent->already[2] = true;
 			}
 			else
 			{
@@ -148,7 +148,7 @@ void AddStudent(Student *MyStudent)
 			}
 			break;
 		case 4:
-			if (already[3] == false)
+			if (MyStudent->already[3] == false)
 			{
 				limit = 10;
 				do {
@@ -160,7 +160,7 @@ void AddStudent(Student *MyStudent)
 
 				cout << "Percentage of Lab Test is " << percentCalcu(temp, 4) << "%" << endl;
 				MyStudent->labTest = temp;
-				already[3] = true;
+				MyStudent->already[3] = true;
 			}
 			else
 			{
@@ -177,9 +177,9 @@ void AddStudent(Student *MyStudent)
 
 void UpdateAssessment(vector<Student> *V1)
 {
-	int option;
-	bool already[4] = { false }, flag = false;
-	float limit, temp;
+	int option, tempOption;
+	bool flag = false;
+	float limit, tempInput;
 	char repeat = 'Y';
 	string  tempID;
 	cout << "\nEnter student ID : ";
@@ -191,29 +191,102 @@ void UpdateAssessment(vector<Student> *V1)
 	{
 		if (itr->idNo == tempID)
 		{
+			flag = true;
 			break;
 		}
 	}
 
-	do {
-		cout << "\nAssessment Menu :" << endl;
-		cout << "[1] Quiz " << endl;
-		cout << "[2] Test " << endl;
-		cout << "[3] Assignment " << endl;
-		cout << "[4] Lab Test " << endl;
-		cout << "Select option :";
-		cin >> option;
+	if (flag == true)
+	{
+		do {
+			cout << "\nAssessment Menu :" << endl;
+			cout << "[1] Quiz " << endl;
+			cout << "[2] Test " << endl;
+			cout << "[3] Assignment " << endl;
+			cout << "[4] Lab Test " << endl;
+			cout << "Select option :";
+			cin >> option;
 
-		switch (option)
-		{
-		case 1: 
-			break;
-		}
+			switch (option)
+			{
+			case 1: limit = 15;
+				cout << "\n\nQuiz 1 mark (15) : " << itr->quiz[0] << endl;
+				cout << "Quiz 2 mark (15) : " << itr->quiz[1] << endl;
+				cout << "Quiz 3 mark (15) : " << itr->quiz[2] << endl;
+				cout << "Current Percenage of Quiz : " << percentCalcu(itr->totalQuizMark, 1) << "%" << endl;
+
+				cout << "\nEnter Quiz No to update [1 to 3]: ";
+				cin >> tempOption;
+
+				itr->totalQuizMark -= itr->quiz[tempOption-1];
+
+				do {
+					cout << "\nEnter Quiz " << tempOption << " mark (15) : ";
+					cin >> tempInput;
+					tempInput = inputCheck(tempInput, limit);
+
+				} while (tempInput == -1);
+
+				itr->quiz[tempOption-1] = tempInput;
+				itr->totalQuizMark += itr->quiz[tempOption-1];
+
+				cout << "\nNew Total Quiz mark (45): " << itr->totalQuizMark << endl;
+				cout << "New Percentage of Quiz is " << percentCalcu(itr->totalQuizMark, 1) << "%" << endl;
+				break;
+
+			case 2:limit = 50;
+				cout << "\n\nCurrent Test mark (50) : " << itr->test << endl;
+
+				do {
+					cout << "\nEnter new Test mark (50) : ";
+					cin >> tempInput;
+					tempInput = inputCheck(tempInput, limit);
+
+				} while (tempInput == -1);
+
+				itr->test = tempInput;
+				cout << "\nNew Test mark (50): " << itr->test << endl;
+				cout << "New Percentage of Test is " << percentCalcu(itr->test, 2) << "%" << endl;
+				break;
+			case 3:limit = 20;
+				cout << "\n\nCurrent Assignment mark (20) : " << itr->assignment << endl;
+
+				do {
+					cout << "\nEnter new Assignment mark (20) : ";
+					cin >> tempInput;
+					tempInput = inputCheck(tempInput, limit);
+
+				} while (tempInput == -1);
+
+				itr->assignment = tempInput;
+				cout << "\nNew Assignment mark (20): " << itr->assignment << endl;
+				cout << "New Percentage of Assignment is " << percentCalcu(itr->assignment, 3) << "%" << endl;
+				break;
+			case 4:limit = 10;
+				cout << "\n\nCurrent Lab Test mark (10) : " << itr->labTest << endl;
+
+				do {
+					cout << "\nEnter new Lab Test mark (10) : ";
+					cin >> tempInput;
+					tempInput = inputCheck(tempInput, limit);
+
+				} while (tempInput == -1);
+
+				itr->labTest = tempInput;
+				cout << "\nNew Lab Test mark (10): " << itr->labTest << endl;
+				cout << "New Percentage of Lab Test is " << percentCalcu(itr->labTest, 3) << "%" << endl;
+				break;
+			}
 
 
-		cout << "Add another assessment [Y/N] : ";
-		cin >> repeat;
-	} while (repeat == 'Y' || repeat == 'y');
+			cout << "Add another assessment [Y/N] : ";
+			cin >> repeat;
+		} while (repeat == 'Y' || repeat == 'y');
+	}
+	else
+	{
+		cout << "Student ID do not exist" << endl;
+	}
 }
 
 int main()
