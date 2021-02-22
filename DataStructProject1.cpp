@@ -42,6 +42,22 @@ int inputCheck(float temp, float limit)
 	return temp;
 }
 
+int caseCheck(float temp, float limit)
+{
+	if (cin.fail()) {
+		cin.clear();
+		cin.sync();
+		cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		temp = 0;
+	}
+	if (temp == 0 || temp > limit || temp < 0)
+	{
+		cout << "\nPlease enter number within 1 - " << limit << " only " << endl;
+		temp = 0;
+	}
+	return temp;
+}
+
 //option: 1-quiz, 2-test, 3-assignment, 4-labTest
 float percentCalcu(float totalMark, int option)
 {
@@ -67,6 +83,16 @@ void AddStudent(Student *MyStudent)
 	cin >> ws;
 	getline(cin, MyStudent->idNo);
 
+	//set all value to 0 the moment a new student is added
+	for (int i = 0; i < sizeof(MyStudent->quiz) / sizeof(MyStudent->quiz[0]); i++) // set quiz value as 0
+	{
+		MyStudent->quiz[i] = 0;
+		MyStudent->totalQuizMark = 0;
+	}
+	MyStudent->test = 0;
+	MyStudent->assignment = 0;
+	MyStudent->labTest = 0;
+
 	do {
 		cout << "\nAssessment Menu :" << endl;
 		cout << "[1] Quiz " << endl;
@@ -74,10 +100,14 @@ void AddStudent(Student *MyStudent)
 		cout << "[3] Assignment " << endl;
 		cout << "[4] Lab Test " << endl;
 		cout << "Select option :";
-		cin >> option;
+		cin >> option;	
+		limit = 4;
+		option = caseCheck(option, limit);
 
 		switch (option)
 		{
+		case 0:
+			break;
 		case 1:
 
 			if (MyStudent->already[0] == false)
@@ -173,7 +203,7 @@ void AddStudent(Student *MyStudent)
 		default:
 			cout << "\nEnter value [1-4] only" << endl;
 		}
-		cout << "Add another assessment [Y/N] : ";
+		cout << "Add another assessment [Y to continue] : ";
 		cin >> repeat;
 	} while (repeat == 'Y' || repeat == 'y');
 
@@ -210,9 +240,12 @@ void UpdateAssessment(vector<Student> *V1)
 			cout << "[4] Lab Test " << endl;
 			cout << "Select option :";
 			cin >> option;
-
+			limit = 4;
+			option = caseCheck(option, limit);
 			switch (option)
 			{
+			case 0:
+				break;
 			case 1: limit = 15;
 				cout << "\n\nQuiz 1 mark (15) : " << itr->quiz[0] << endl;
 				cout << "Quiz 2 mark (15) : " << itr->quiz[1] << endl;
@@ -285,7 +318,7 @@ void UpdateAssessment(vector<Student> *V1)
 			}
 
 
-			cout << "Add another assessment [Y/N] : ";
+			cout << "Add another assessment [Y to continue] : ";
 			cin >> repeat;
 		} while (repeat == 'Y' || repeat == 'y');
 	}
@@ -301,6 +334,7 @@ void Summary(vector<Student>* V1)
 	bool flag = false;
 	float limit, tempInput;
 	char repeat = 'Y';
+	float tempCarry = 0;
 	string  tempID;
 	cout << "\nDisplay Menu :" << endl;
 	cout << "[1] Individual " << endl;
@@ -308,10 +342,15 @@ void Summary(vector<Student>* V1)
 	cout << "[3] Highest carry mark " << endl;
 	cout << "Select option :";
 	cin >> option;
+
+	limit = 3;
+	option = caseCheck(option, limit);
 	vector<Student>::iterator itr;
 
 	switch (option)
 	{
+	case 0:
+		break;
 	case 1:
 		cout << "\nEnter student ID : ";
 		cin >> ws;
@@ -335,12 +374,13 @@ void Summary(vector<Student>* V1)
 			cout << "Lab Test                   : " << percentCalcu(itr->labTest, 3) << "%" << endl;
 			cout << "Total Carry Mark           : " << itr->totalCarryMark << "%" << endl;
 			cout << "\nEnd of Summary" << endl;
-			break;
+			
 		}
 		else
 		{
 			cout << "Student ID do not exist" << endl;
 		}
+		break;
 
 	case 2:
 		cout << "\n::Carry Mark Details::" << endl;
@@ -360,7 +400,7 @@ void Summary(vector<Student>* V1)
 	case 3:
 
 		cout << "\n::Carry Mark Details::" << endl;
-		float tempCarry = 0;
+		
 		for (itr = V1->begin(); itr != V1->end(); itr++)
 		{
 			itr->totalCarryMark = percentCalcu(itr->totalQuizMark, 1) + percentCalcu(itr->test, 2) + percentCalcu(itr->assignment, 3) + percentCalcu(itr->labTest, 3);
@@ -384,7 +424,8 @@ void Summary(vector<Student>* V1)
 		cout << "\nEnd of Summary" << endl;
 		break;
 	default:
-		cout << "";
+		break;
+	
 	}
 }
 
@@ -415,14 +456,18 @@ int main()
 {
 	vector<Student>V1;
 	Student MyStudent, reset;
-	int option;
+	int option,limit;
 
 	do {
 		ShowMenu();
 		cout << " Select Menu : ";
 		cin >> option;
+		limit = 5;
+		option = caseCheck(option, limit);
 		switch (option)
 		{
+		case 0:
+			break;
 		case 1:
 			AddStudent(&MyStudent);
 			V1.push_back(MyStudent);
@@ -435,9 +480,10 @@ int main()
 			Summary(&V1);
 			break;
 		case 4:
-			OutputToFile(&V1);			//todo: maybe check for data existance before output
+			OutputToFile(&V1);			
 			break;
 		case 5:
+			cout << "\nThank you for using DepressC Carry Mark Program !";
 			break;
 		default:
 			cout << "\n Please Enter numbers from 1 to 5 only " << endl;
