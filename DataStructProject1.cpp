@@ -58,6 +58,35 @@ int caseCheck(float temp, float limit)
 	return temp;
 }
 
+string idCheck(vector<Student> *V1)
+{
+	int flag;
+	string temp;
+
+	do {
+		cout << "\nEnter Student ID: ";
+		cin >> ws;
+		getline(cin, temp);
+
+		flag = 0;
+		for (auto i = V1->begin(); i != V1->end(); i++)
+		{
+			if (temp == i->idNo)
+			{
+				flag = 1;
+				break;
+			}
+		}
+		if (flag == 1)
+		{
+			cout << "Oh no, the ID have been used before." << endl;
+		}
+
+	} while (flag == 1);
+
+	return temp;
+}
+
 //option: 1-quiz, 2-test, 3-assignment, 4-labTest
 float percentCalcu(float totalMark, int option)
 {
@@ -74,14 +103,13 @@ float percentCalcu(float totalMark, int option)
 	}
 }
 
-void AddStudent(Student *MyStudent)
+void AddStudent(Student *MyStudent, vector<Student>* V1)
 {
 	int option;
 	float limit,temp;
 	char repeat = 'Y';
-	cout << "\nEnter student ID : ";
-	cin >> ws;
-	getline(cin, MyStudent->idNo);
+	
+	MyStudent->idNo = idCheck(V1);
 
 	//set all value to 0 the moment a new student is added
 	for (int i = 0; i < sizeof(MyStudent->quiz) / sizeof(MyStudent->quiz[0]); i++) // set quiz value as 0
@@ -252,9 +280,12 @@ void UpdateAssessment(vector<Student> *V1)
 				cout << "Quiz 3 mark (15) : " << itr->quiz[2] << endl;
 				cout << "Current Percenage of Quiz : " << percentCalcu(itr->totalQuizMark, 1) << "%" << endl;
 
-				cout << "\nEnter Quiz No to update [1 to 3]: ";
-				cin >> tempOption;
-
+				do {
+					cout << "\nEnter Quiz No to update [1 to 3]: ";
+					cin >> tempOption;
+					tempOption = caseCheck(tempOption, 3);
+				} while (tempOption == 0);
+				
 				itr->totalQuizMark -= itr->quiz[tempOption-1];
 
 				do {
@@ -469,7 +500,7 @@ int main()
 		case 0:
 			break;
 		case 1:
-			AddStudent(&MyStudent);
+			AddStudent(&MyStudent, &V1);
 			V1.push_back(MyStudent);
 			MyStudent = reset;
 			break;
