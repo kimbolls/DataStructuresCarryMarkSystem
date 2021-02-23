@@ -474,13 +474,13 @@ int main()
 			MyStudent = reset;
 			break;
 		case 2:
-			UpdateAssessment(&V1);			//todo: check if already is true
+			UpdateAssessment(&V1);			
 			break;
 		case 3:
-			Summary(&V1);
+			Summary(&V1);					//check if data exist
 			break;
 		case 4:
-			OutputToFile(&V1);			
+			OutputToFile(&V1);				//check if data exist
 			break;
 		case 5:
 			cout << "\nThank you for using DepressC Carry Mark Program !";
