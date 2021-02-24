@@ -1,3 +1,12 @@
+//Subject : CSNB344 Data Structure & Algorithms with STL
+//Group name : DepressC
+//1. Name:Nik Muhammad Asyraf Bin Nik Azlan		 ID:SW01080787
+//2. Name:Muhammad Hakim bin Mohd Pakhari		 ID:SW01080783
+//3. Name:Abdulah Taqiuddin Bin Abdul Rahman	 ID:SW01080776
+//4. Name:Muhammad Syawal Bin Azhar				 ID:SW01080798
+//5. Name:Lee Linsern							 ID:SW01080786
+//6. Name:Siew Xunwan Fredywan					 ID:SW01080815
+
 #include <iostream>
 #include <vector>
 #include <string>
